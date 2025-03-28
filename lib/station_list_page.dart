@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'seat_page.dart';
 
-// 역 선택 페이지
 class StationListPage extends StatelessWidget {
-  const StationListPage({super.key});
+  final String title;
+  final String? selectedStation;
 
+  const StationListPage({super.key, required this.title, this.selectedStation});
+
+  // 선택 가능한 역 목록
   static List<String> stations = [
     "수서",
     "동탄",
@@ -21,41 +23,34 @@ class StationListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 위젯의 UI를 구성하는 메서드
     return Scaffold(
-      appBar: AppBar(title: const Text('출발역 선택'), centerTitle: true),
+      appBar: AppBar(title: Text(title), centerTitle: true),
       body: ListView.builder(
-        // 스크롤 가능한 목록 만들기
-        itemCount: stations.length, // 목록의 아이템 개수 설정
+        itemCount: stations.length,
         itemBuilder: (context, index) {
-          // 아이템
-          final station = stations[index]; // 현재 인덱스에 해당하는 역 이름 가져오기
+          final station = stations[index];
+          final isSelected = station == selectedStation;
 
           return Container(
-            // 역 이름을 감싸는 컨테이너
             height: 50,
             decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Colors.grey[300]!), // 아래쪽에만 테두리 추가
-              ),
+              border: Border(bottom: BorderSide(color: Colors.grey[300]!)),
             ),
             child: ListTile(
-              // 목록 아이템 위젯
               title: Text(
                 station,
-                style: const TextStyle(
-                  // 텍스트 스타일 설정
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: isSelected ? Colors.purple : Colors.black,
                 ),
               ),
+              trailing:
+                  isSelected
+                      ? const Icon(Icons.check, color: Colors.purple)
+                      : null,
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SeatPage(),
-                  ), // 좌석 선택 페이지로 이동
-                );
+                Navigator.pop(context, station); // 선택된 역 이름 반환
               },
             ),
           );

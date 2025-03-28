@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'station_list_page.dart';
+import 'seat_page.dart';
 
-// 앱 실행의 시작점, MyApp 위젯을 실행시킴
 void main() {
-  runApp(const MyApp()); // Flutter 앱 실행 위젯으로 MyApp 지정
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -11,93 +11,153 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 위젯의 UI를 구성하는 메서드
-    return MaterialApp(
-      title: 'Flutter Train App', // 앱 이름 설정
-      home: const HomePage(), // 앱의 첫 화면으로 HomePage 위젯 설정
-    );
+    return MaterialApp(title: 'Flutter Train App', home: const HomePage());
   }
 }
 
-// 앱의 홈페이지 위젯, 출발역과 도착역 선택 UI 포함
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String? departureStation;
+  String? arrivalStation;
+
+  // 출발역 선택 함수
+  void _selectDepartureStation() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => StationListPage(
+              title: '출발역 선택',
+              selectedStation: departureStation,
+            ),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        departureStation = result;
+      });
+    }
+  }
+
+  // 도착역 선택 함수
+  void _selectArrivalStation() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => StationListPage(
+              title: '도착역 선택',
+              selectedStation: arrivalStation,
+            ),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        arrivalStation = result;
+      });
+    }
+  }
+
+  // 좌석 선택 페이지로 이동하는 함수
+  void _navigateToSeatPage() {
+    if (departureStation != null && arrivalStation != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => SeatPage(
+                departureStation: departureStation!,
+                arrivalStation: arrivalStation!,
+              ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('출발역과 도착역을 모두 선택해주세요.')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // 기본 앱 화면
-      appBar: AppBar(
-        title: const Text('기차 예매'), // 앱바 제목목
-        centerTitle: true, // 앱바 제목을 중앙에 배치
-      ),
+      appBar: AppBar(title: const Text('기차 예매'), centerTitle: true),
       body: Container(
-        // 화면 본문 내용을 감싸는 컨테이너
-        color: Colors.grey[200], // 배경색 설정
-        padding: const EdgeInsets.all(20), // 컨테이너 내부 여백을 모든 방향으로 20 설정
+        color: Colors.grey[200],
+        padding: const EdgeInsets.all(20),
         child: Column(
-          // 세로 방향으로 위젯들을 배치
-          mainAxisAlignment: MainAxisAlignment.center, // 세로 방향 가운데 정렬
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // 출발역/도착역 선택 영역
             Container(
-              // 출발역/도착역 선택 영역 컨테이너
               height: 200,
               decoration: BoxDecoration(
-                color: Colors.white, // 배경색
-                borderRadius: BorderRadius.circular(20), // 모서리 둥글기
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
-                // 가로 방향으로 위젯들을 배치
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly, // 가로 방향 균등 배치
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   // 출발역 선택 부분
                   Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          // '출발역' 레이블 텍스트
-                          '출발역',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
+                    child: InkWell(
+                      onTap: _selectDepartureStation,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            '출발역',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          '선택',
-                          style: TextStyle(fontSize: 40),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                          const SizedBox(height: 10),
+                          Text(
+                            departureStation ?? '선택',
+                            style: const TextStyle(fontSize: 40),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
 
-                  // 세로선 - 출발역과 도착역 사이 구분선
+                  // 세로 구분선
                   Container(width: 2, height: 50, color: Colors.grey[400]),
 
                   // 도착역 선택 부분
                   Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          // '도착역' 텍스트
-                          '도착역',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
+                    child: InkWell(
+                      onTap: _selectArrivalStation,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            '도착역',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          '선택',
-                          style: TextStyle(fontSize: 40),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                          const SizedBox(height: 10),
+                          Text(
+                            arrivalStation ?? '선택',
+                            style: const TextStyle(fontSize: 40),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -105,32 +165,20 @@ class HomePage extends StatelessWidget {
             ),
 
             const SizedBox(height: 20),
+
             // 좌석 선택 버튼
             SizedBox(
-              // 버튼의 크기를 지정
               width: double.infinity,
               height: 60,
               child: ElevatedButton(
-                // 입체감 있는 버튼
-                onPressed: () {
-                  Navigator.push(
-                    // 새 화면으로 이동
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const StationListPage(),
-                    ), // 역 선택 페이지로 이동
-                  );
-                },
+                onPressed: _navigateToSeatPage,
                 style: ElevatedButton.styleFrom(
-                  //버튼 스타일일
                   backgroundColor: Colors.purple,
                   shape: RoundedRectangleBorder(
-                    // 버튼 모양 설정
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 child: const Text(
-                  // 버튼 내부 텍스트
                   '좌석 선택',
                   style: TextStyle(
                     color: Colors.white,
