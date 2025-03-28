@@ -1,16 +1,39 @@
-# flutter_train_app
+# Flutter 기차 예매 앱
 
-A new Flutter project.
+Flutter로 개발된 간단한 기차 예매 애플리케이션입니다. 사용자는 출발역과 도착역을 선택하고 좌석을 지정할 수 있습니다.
 
-## Getting Started
+## 주요 기능
 
-This project is a starting point for a Flutter application.
+- 출발역 및 도착역 선택
+- 11개 기차역 목록 표시
+- 좌석 배치도 표시 및 좌석 선택 기능
+- 예매 버튼을 통한 예매 완료
 
-A few resources to get you started if this is your first Flutter project:
+## 스크린샷
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 홈페이지
+![홈페이지](screenshots/home.png)
+- 출발역과 도착역 선택 UI
+- 좌석 선택 버튼
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 역 선택 페이지
+![역 선택 페이지](screenshots/station_list.png)
+- 11개 역 목록 표시
+- 역 이름 터치로 선택 가능
+
+### 좌석 선택 페이지
+![좌석 선택 페이지](screenshots/seat_page.png)
+- 출발역-도착역 정보 표시
+- A, B, C, D 열과 20개 행으로 구성된 좌석 배치도
+- 좌석 선택/해제 기능 (보라색: 선택됨, 회색: 선택안됨)
+- 예매 버튼
+
+## 프로젝트 구조
+
+```
+flutter_train_app/
+├── lib/
+│   ├── main.dart            # 앱 진입점 및 홈페이지 구현
+│   ├── station_list_page.dart # 역 선택 페이지
+│   └── seat_page.dart       # 좌석 선택 페이지
+```
